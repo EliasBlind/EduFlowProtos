@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package sso.v1;
+
+option go_package = "github.com/EliasBlind/EduFlow/pkg/protos/gen/sso/v1;ssov1";
+
+// Авторизация пользователей
+service Auth {
+  // Регистрация нового пользователя
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+
+  // Верефикация почты (двухфакторная аунтетификация)
+  rpc VerifyEmail(VerifyRequest) returns (VerifyResponse);
+
+  // При логине выдаем сразу два токена
+  rpc Login(LoginRequest) returns (TokenPair);
+
+  // Разлогинится
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
+
+  // Для обновления передаем Refresh-токен
+  rpc RefreshToken(RefreshRequest) returns (TokenPair);
+}
+
+message RegisterRequest {
+  string email    = 1;
+  string login    = 2;
+  string password = 3;
+  int32  app_id   = 4;
+}
+
+message RegisterResponse {}
+
+message VerifyRequest {
+  string email = 1;
+  string code  = 2;
+}
+
+message VerifyResponse {
+  string id = 1; // uuid
+}
+
+message LoginRequest {
+  string login    = 1;
+  string password = 2;
+  int32  app_id   = 3;
+}
+
+message RefreshRequest {
+  string refresh_token = 1;
+  int32  app_id        = 2;
+}
+
+message TokenPair {
+  string access_token  = 1;
+  string refresh_token = 2; // uuid
+}
+
+message LogoutRequest {
+  string refresh_token = 1;
+}
+
+message LogoutResponse {
+  bool success = 1;
+}
