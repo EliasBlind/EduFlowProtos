@@ -10,7 +10,7 @@ service Auth {
   rpc Register(RegisterRequest) returns (RegisterResponse);
 
   // Верефикация почты (двухфакторная аунтетификация)
-  rpc VerifyEmail(VerifyRequest) returns (VerifyResponse);
+  rpc VerifyEmail(VerifyRequest) returns (TokenPair);
 
   // При логине выдаем сразу два токена
   rpc Login(LoginRequest) returns (TokenPair);
@@ -34,10 +34,6 @@ message RegisterResponse {}
 message VerifyRequest {
   string email = 1;
   string code  = 2;
-}
-
-message VerifyResponse {
-  string id = 1; // uuid
 }
 
 message LoginRequest {

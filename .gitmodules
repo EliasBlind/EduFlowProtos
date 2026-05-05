@@ -1,0 +1,4 @@
+[submodule "lib/protos"]
+	path = lib/protos
+	url = https://github.com/EliasBlind/EduFlowProtos
+	branch = develop
