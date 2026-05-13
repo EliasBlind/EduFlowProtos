@@ -27,22 +27,22 @@ service StudentService {
 }
 
 message Student {
-  string          id        = 1; // uuid7
-  optional string class_id  = 2; // uuid7
+  string          id        = 1; // uuid
+  optional string class_id  = 2; // uuid
   string          full_name = 3;
 }
 
 message CreateStudentRequest {
-  optional string class_id  = 1; // uuid7
+  optional string class_id  = 1; // uuid
   string          full_name = 2;
 }
 
 message GetStudentRequest {
-  string student_id = 1; // uuid7
+  string student_id = 1; // uuid
 }
 
 message ListStudentsRequest {
-  string class_id = 1; // uuid7
+  string class_id = 1; // uuid
   uint32 limit    = 2;
   uint32 offset   = 3;
 }
@@ -53,8 +53,8 @@ message ListStudentsResponse {
 }
 
 message UpdateStudentRequest {
-  string          id        = 1; // uuid7
-  optional string class_id  = 2; // uuid7
+  string          id        = 1; // uuid
+  optional string class_id  = 2; // uuid
   optional string full_name = 3;
 }
 
@@ -78,7 +78,7 @@ service TeacherService {
 }
 
 message Teacher {
-  string id        = 1; // uuid7
+  string id        = 1; // uuid
   string full_name = 2;
 }
 
@@ -97,12 +97,12 @@ message ListTeachersResponse {
 }
 
 message UpdateTeacherRequest {
-  string id        = 1; // uuid7
+  string id        = 1; // uuid
   string full_name = 2;
 }
 
 message DeleteTeacherRequest {
-  string id = 1; // uuid7
+  string id = 1; // uuid
 }
 
 // Сервис для управления классами
@@ -113,7 +113,7 @@ service ClassesService {
   // Получение класса по id
   rpc GetClass(GetClassRequest) returns (Class);
 
-  // Получение классов у которые обучаются у конкретного учителя
+  // Получение классов которые обучаются у конкретного учителя
   rpc ListTeacherClasses(ListTeacherClassesRequest) returns (ListClassesResponse);
 
   // Обновление информации класса
@@ -133,7 +133,7 @@ message CreateClassRequest {
 }
 
 message Class {
-  string id         = 1; // uuid7
+  string id         = 1; // uuid
   string class_name = 2;
   // Год обучения
   uint32 year_of_study = 3;
@@ -142,7 +142,7 @@ message Class {
 }
 
 message GetClassRequest {
-  string id = 1; // uuid7
+  string id = 1; // uuid
 }
 
 message ListTeacherClassesRequest {
@@ -157,7 +157,7 @@ message ListClassesResponse {
 }
 
 message UpdateClassRequest {
-  string          id         = 1; // uuid7
+  string          id         = 1; // uuid
   optional string class_name = 2;
   // Год обучения
   optional uint32 year_of_study = 3;
@@ -166,7 +166,7 @@ message UpdateClassRequest {
 }
 
 message DeleteClassRequest {
-  string id = 1; // uuid7
+  string id = 1; // uuid
 }
 
 // Работа с предметами
@@ -186,17 +186,17 @@ message CreateSubjectRequest {
 }
 
 message Subject {
-  string id   = 1; // uuid7
+  string id   = 1; // uuid
   string full_name = 2;
 }
 
 message UpdateSubjectRequest {
-  string id   = 1; // uuid7
+  string id   = 1; // uuid
   string full_name = 2;
 }
 
 message DeleteSubjectRequest {
-  string id = 1; // uuid7
+  string id = 1; // uuid
 }
 
 // Сервис работы с оценками
@@ -215,8 +215,8 @@ service GradesService {
 }
 
 message RecordGradeRequest {
-  string                             subject_id    = 1; // uuid7
-  string                             student_id    = 2; // uuid7
+  string                             ts_id       = 1; // uuid
+  string                             student_id = 2; // uuid
   optional google.protobuf.Timestamp date_of_grade = 3;
   oneof filter {
     uint32 grade          = 4;
@@ -227,24 +227,24 @@ message RecordGradeRequest {
 }
 
 message Grade {
-  string                    id            = 1; // uuid7
-  string                    subject_id    = 2; // uuid7
-  string                    student_id    = 3; // uuid7
-  string                    class_id      = 4; // uuid7
+  string                    id            = 1; // uuid
+  string                    subject_id    = 2; // uuid
+  string                    student_id    = 3; // uuid
+  string                    class_id      = 4; // uuid
   google.protobuf.Timestamp date_of_grade = 5;
   oneof filter {
     uint32 grade          = 6;
-    string status_code_id = 7; // uuid7
+    string status_code_id = 7; // uuid
   }
   uint32          lesson_number = 8;
   optional string note          = 9;
 }
 
 message ListGradesRequest {
-  optional string subject_id = 1; // uuid7
+  optional string subject_id = 1; // uuid
   oneof filter {
-    string student_id = 2; // uuid7
-    string class_id   = 3; // uuid7
+    string student_id = 2; // uuid
+    string class_id   = 3; // uuid
   }
   google.protobuf.Timestamp          start = 4;
   optional google.protobuf.Timestamp end   = 5;
@@ -256,7 +256,7 @@ message ListGradesResponse {
 }
 
 message UpdateGradeRequest {
-  string grade_id = 1; // uuid7
+  string grade_id = 1; // uuid
   oneof filter {
     uint32 grade          = 2;
     string status_code_id = 3;
@@ -284,26 +284,26 @@ service HomeworkService {
 }
 
 message RecordHomeworkRequest {
-  string                        teacher_id       = 1; // uuid7
-  string                        class_id         = 2; // uuid7
-  string                        subject_id       = 3; // uuid7
+  string                        teacher_id       = 1; // uuid
+  string                        class_id         = 2; // uuid
+  string                        subject_id       = 3; // uuid
   string                        description_task = 4;
   optional google.protobuf.Timestamp start            = 5;
   optional google.protobuf.Timestamp end              = 6;
 }
 
 message Homework {
-  string                        id               = 1; // uuid7
-  string                        class_id         = 2; // uuid7
-  string                        teacher_id       = 3; // uuid7
-  string                        subject_id       = 4; // uuid7
+  string                        id               = 1; // uuid
+  string                        class_id         = 2; // uuid
+  string                        teacher_id       = 3; // uuid
+  string                        subject_id       = 4; // uuid
   string                        description_task = 5;
   optional google.protobuf.Timestamp start            = 6;
   optional google.protobuf.Timestamp end              = 7;
 }
 
 message UpdateHomeworkRequest {
-  string                             id               = 1; // uuid7
+  string                             id               = 1; // uuid
   optional string                    description_task = 2;
   optional google.protobuf.Timestamp start            = 3;
   optional google.protobuf.Timestamp end              = 4;
@@ -323,7 +323,7 @@ message ListHomeworkResponse {
 }
 
 message DeleteHomeworkRequest {
-  string id = 1; // uuid7
+  string id = 1; // uuid
 }
 
 // Сервис управление статус-кодамиDeleteStatusCodeRequest
@@ -346,12 +346,12 @@ message CreateStatusCodeRequest {
 }
 
 message StatusCode {
-  string id   = 1; // uuid7
+  string id   = 1; // uuid
   string full_name = 2;
 }
 
 message UpdateStatusCodeRequest {
-  string id   = 1; // uuid7
+  string id   = 1; // uuid
   string full_name = 2;
 }
 
@@ -363,7 +363,7 @@ message ListStatusCodeResponse {
 }
 
 message DeleteStatusCodeRequest {
-  string id = 1; // uuid7
+  string id = 1; // uuid
 }
 
 // Сервис отвечающий за то у кого и какие предметы ведет учитель
@@ -385,27 +385,27 @@ service TeachingLoadService {
 }
 
 message CreateTeachingLoadRequest {
-  string teacher_id = 1; // uuid7
-  string subject_id = 2; // uuid7
-  string class_id   = 3; // uuid7
+  string teacher_id = 1; // uuid
+  string subject_id = 2; // uuid
+  string class_id   = 3; // uuid
 }
 
 message TeachingLoad {
-  string id         = 1; // uuid7
-  string teacher_id = 2; // uuid7
-  string subject_id = 3; // uuid7
-  string class_id   = 4; // uuid7
+  string id         = 1; // uuid
+  string teacher_id = 2; // uuid
+  string subject_id = 3; // uuid
+  string class_id   = 4; // uuid
 }
 
 message UpdateTeachingLoadRequest {
-  string id         = 1; // uuid7
-  string teacher_id = 2; // uuid7
+  string id         = 1; // uuid
+  string teacher_id = 2; // uuid
 }
 
 message ListTeachingLoadRequest {
   oneof filter {
-    string teacher_id = 1; // uuid7
-    string class_id = 2; // uuid7
+    string teacher_id = 1; // uuid
+    string class_id = 2; // uuid
   }
 }
 
@@ -415,9 +415,9 @@ message ListTeachingLoadResponse {
 }
 
 message GetTeachingLoadRequest {
-  string id = 1; // uuid7
+  string id = 1; // uuid
 }
 
 message DeleteTeachingLoadRequest {
-  string id = 1; // uuid7
+  string id = 1; // uuid
 }
