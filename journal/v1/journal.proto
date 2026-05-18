@@ -177,6 +177,8 @@ service SubjectService {
   // Обновление информации о предмете
   rpc UpdateSubject(UpdateSubjectRequest) returns (Subject);
 
+  rpc ListSubjects(ListSubjectsRequest) returns(ListSubjectsResponse);
+
   // Удаление предмета
   rpc DeleteSubject(DeleteSubjectRequest) returns (google.protobuf.Empty);
 }
@@ -193,6 +195,13 @@ message Subject {
 message UpdateSubjectRequest {
   string id   = 1; // uuid
   string full_name = 2;
+}
+
+message ListSubjectsRequest {}
+
+message ListSubjectsResponse {
+  uint32 total_count = 1;
+  repeated Subject subjects = 2;
 }
 
 message DeleteSubjectRequest {
