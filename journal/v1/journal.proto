@@ -14,9 +14,12 @@ service StudentService {
 
   // Получение информации о студенте
   rpc GetStudent(GetStudentRequest) returns (Student);
-
+  
+  rpc ListStudentsWithoutClass(ListStudentsWithoutClassRequest) returns (ListStudentsResponse);
+  
   // Получение студентов класса
   rpc ListStudents(ListStudentsRequest) returns (ListStudentsResponse);
+
 
   // Обновление информации о студенте
   rpc UpdateStudent(UpdateStudentRequest) returns (Student);
@@ -57,6 +60,8 @@ message UpdateStudentRequest {
   optional string class_id  = 2; // uuid
   optional string full_name = 3;
 }
+
+message ListStudentsWithoutClassRequest { }
 
 message DeleteStudentRequest {
   string id = 1;
