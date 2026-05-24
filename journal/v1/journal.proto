@@ -6,26 +6,58 @@ option go_package = "github.com/EliasBlind/EduFlow/pkg/protos/gen/journal/v1;jou
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
 
-// Сервис управления студентами
+
+// Описание сервиса StudentService с маппингом в REST API
 service StudentService {
-  // Добавление нового студента в учебное заведение и класс
-  rpc CreateStudent(CreateStudentRequest) returns (Student);
-
-  // Получение информации о студенте
-  rpc GetStudent(GetStudentRequest) returns (Student);
   
-  rpc ListStudentsWithoutClass(ListStudentsWithoutClassRequest) returns (ListStudentsResponse);
-  
-  // Получение студентов класса
-  rpc ListStudents(ListStudentsRequest) returns (ListStudentsResponse);
+  // Добавление нового студента
+  rpc CreateStudent(CreateStudentRequest) returns (Student) {
+    option (google.api.http) = {
+      post: "/v1/students"
+      body: "*"
+    };
+  }
 
+  // Получение информации о конкретном студенте по его ID
+  rpc GetStudent(GetStudentRequest) returns (Student) {
+    option (google.api.http) = {
+      // {id} автоматически запишется в поле id внутри GetStudentRequest
+      get: "/v1/students/{id}" 
+    };
+  }
+  
+  // Получение списка студентов без назначенного класса
+  rpc ListStudentsWithoutClass(ListStudentsWithoutClassRequest) returns (ListStudentsResponse) {
+    option (google.api.http) = {
+      get: "/v1/students/unassigned"
+    };
+  }
+  
+  // Получение студентов конкретного класса
+  rpc ListStudents(ListStudentsRequest) returns (ListStudentsResponse) {
+    option (google.api.http) = {
+      // {class_id} автоматически запишется в поле class_id внутри ListStudentsRequest
+      get: "/v1/classes/{class_id}/students"
+    };
+  }
 
   // Обновление информации о студенте
-  rpc UpdateStudent(UpdateStudentRequest) returns (Student);
+  rpc UpdateStudent(UpdateStudentRequest) returns (Student) {
+    option (google.api.http) = {
+      // {id} свяжется с полем id в UpdateStudentRequest, а остальные данные придут в теле
+      put: "/v1/students/{id}"
+      body: "*"
+    };
+  }
 
   // Удаление студента из учебного заведения
-  rpc DeleteStudent(DeleteStudentRequest) returns (google.protobuf.Empty);
+  rpc DeleteStudent(DeleteStudentRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/students/{id}"
+    };
+  }
 }
 
 message Student {
@@ -67,20 +99,41 @@ message DeleteStudentRequest {
   string id = 1;
 }
 
-// Сервис для работы с учителями
+// Сервис для работы с учителями с маппингом в REST API
 service TeacherService {
+  
   // Создание учителя
-  rpc CreateTeacher(CreateTeacherRequest) returns (Teacher);
+  rpc CreateTeacher(CreateTeacherRequest) returns (Teacher) {
+    option (google.api.http) = {
+      post: "/v1/teachers"
+      body: "*"
+    };
+  }
 
   // Получение всех учителей учебного заведения
-  rpc ListTeachers(ListTeachersRequest) returns (ListTeachersResponse);
+  rpc ListTeachers(ListTeachersRequest) returns (ListTeachersResponse) {
+    option (google.api.http) = {
+      get: "/v1/teachers"
+    };
+  }
 
   // Обновление данных учителя
-  rpc UpdateTeacher(UpdateTeacherRequest) returns (Teacher);
+  rpc UpdateTeacher(UpdateTeacherRequest) returns (Teacher) {
+    option (google.api.http) = {
+      // {id} свяжется с полем id в UpdateTeacherRequest
+      put: "/v1/teachers/{id}"
+      body: "*"
+    };
+  }
 
   // Удаление учителя
-  rpc DeleteTeacher(DeleteTeacherRequest) returns (google.protobuf.Empty);
+  rpc DeleteTeacher(DeleteTeacherRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/teachers/{id}"
+    };
+  }
 }
+
 
 message Teacher {
   string id        = 1; // uuid
@@ -110,25 +163,55 @@ message UpdateTeacherRequest {
 message DeleteTeacherRequest {
   string id = 1; // uuid
 }
-
-// Сервис для управления классами
+// Сервис для управления классами с маппингом в REST API
 service ClassesService {
+  
   // Создание нового класса
-  rpc CreateClass(CreateClassRequest) returns (Class);
+  rpc CreateClass(CreateClassRequest) returns (Class) {
+    option (google.api.http) = {
+      post: "/v1/classes"
+      body: "*"
+    };
+  }
 
   // Получение класса по id
-  rpc GetClass(GetClassRequest) returns (Class);
+  rpc GetClass(GetClassRequest) returns (Class) {
+    option (google.api.http) = {
+      // {id} запишется в поле id внутри GetClassRequest
+      get: "/v1/classes/{id}"
+    };
+  }
 
-  rpc ListClasses(ListClassesRequest) returns (ListClassesResponse);
+  // Получение всех классов учебного заведения
+  rpc ListClasses(ListClassesRequest) returns (ListClassesResponse) {
+    option (google.api.http) = {
+      get: "/v1/classes"
+    };
+  }
 
-  // Получение классов которые обучаются у конкретного учителя
-  rpc ListTeacherClasses(ListTeacherClassesRequest) returns (ListClassesResponse);
+  // Получение классов, которые обучаются у конкретного учителя
+  rpc ListTeacherClasses(ListTeacherClassesRequest) returns (ListClassesResponse) {
+    option (google.api.http) = {
+      // {teacher_id} запишется в поле teacher_id внутри ListTeacherClassesRequest
+      get: "/v1/teachers/{teacher_id}/classes"
+    };
+  }
 
   // Обновление информации класса
-  rpc UpdateClass(UpdateClassRequest) returns (Class);
+  rpc UpdateClass(UpdateClassRequest) returns (Class) {
+    option (google.api.http) = {
+      // {id} свяжется с полем id в UpdateClassRequest
+      put: "/v1/classes/{id}"
+      body: "*"
+    };
+  }
 
   // Удаление класса
-  rpc DeleteClass(DeleteClassRequest) returns (google.protobuf.Empty);
+  rpc DeleteClass(DeleteClassRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/classes/{id}"
+    };
+  }
 }
 
 message CreateClassRequest {
@@ -179,18 +262,39 @@ message DeleteClassRequest {
   string id = 1; // uuid
 }
 
-// Работа с предметами
+// Сервис для работы с предметами с маппингом в REST API
 service SubjectService {
+  
   // Создание нового предмета
-  rpc CreateSubject(CreateSubjectRequest) returns (Subject);
+  rpc CreateSubject(CreateSubjectRequest) returns (Subject) {
+    option (google.api.http) = {
+      post: "/v1/subjects"
+      body: "*"
+    };
+  }
 
   // Обновление информации о предмете
-  rpc UpdateSubject(UpdateSubjectRequest) returns (Subject);
+  rpc UpdateSubject(UpdateSubjectRequest) returns (Subject) {
+    option (google.api.http) = {
+      // {id} свяжется с полем id в UpdateSubjectRequest
+      put: "/v1/subjects/{id}"
+      body: "*"
+    };
+  }
 
-  rpc ListSubjects(ListSubjectsRequest) returns(ListSubjectsResponse);
+  // Получение списка всех предметов
+  rpc ListSubjects(ListSubjectsRequest) returns (ListSubjectsResponse) {
+    option (google.api.http) = {
+      get: "/v1/subjects"
+    };
+  }
 
   // Удаление предмета
-  rpc DeleteSubject(DeleteSubjectRequest) returns (google.protobuf.Empty);
+  rpc DeleteSubject(DeleteSubjectRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/subjects/{id}"
+    };
+  }
 }
 
 message CreateSubjectRequest {
@@ -218,19 +322,39 @@ message DeleteSubjectRequest {
   string id = 1; // uuid
 }
 
-// Сервис работы с оценками
+// Сервис работы с оценками с маппингом в REST API
 service GradesService {
+  
   // Выставить оценку
-  rpc RecordGrade(RecordGradeRequest) returns (Grade);
+  rpc RecordGrade(RecordGradeRequest) returns (Grade) {
+    option (google.api.http) = {
+      post: "/v1/grades"
+      body: "*"
+    };
+  }
 
-  // Получение оценок по предметам
-  rpc ListGrades(ListGradesRequest) returns (ListGradesResponse);
+  // Получение оценок по предметам / студентам / классам
+  rpc ListGrades(ListGradesRequest) returns (ListGradesResponse) {
+    option (google.api.http) = {
+      get: "/v1/grades"
+    };
+  }
 
   // Изменение оценки
-  rpc UpdateGrade(UpdateGradeRequest) returns (Grade);
+  rpc UpdateGrade(UpdateGradeRequest) returns (Grade) {
+    option (google.api.http) = {
+      // {id} свяжется с полем id в UpdateGradeRequest
+      put: "/v1/grades/{id}"
+      body: "*"
+    };
+  }
 
   // Удаление оценки
-  rpc DeleteGrade(DeleteGradeRequest) returns (google.protobuf.Empty);
+  rpc DeleteGrade(DeleteGradeRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/grades/{id}"
+    };
+  }
 }
 
 message RecordGradeRequest {
@@ -286,20 +410,40 @@ message UpdateGradeRequest {
 message DeleteGradeRequest {
   string id = 1;
 }
-
-// Управление домашним заданием
+// Сервис управления домашним заданием с маппингом в REST API
 service HomeworkService {
+  
   // Создание домашнего задания
-  rpc RecordHomework(RecordHomeworkRequest) returns (Homework);
+  rpc RecordHomework(RecordHomeworkRequest) returns (Homework) {
+    option (google.api.http) = {
+      post: "/v1/homework"
+      body: "*"
+    };
+  }
 
   // Обновление домашнего задания
-  rpc UpdateHomework(UpdateHomeworkRequest) returns (Homework);
+  rpc UpdateHomework(UpdateHomeworkRequest) returns (Homework) {
+    option (google.api.http) = {
+      // {id} свяжется с полем id в UpdateHomeworkRequest
+      put: "/v1/homework/{id}"
+      body: "*"
+    };
+  }
 
-  // Получение домашнего задания класса
-  rpc ListHomework(ListHomeworkRequest) returns (ListHomeworkResponse);
+  // Получение домашнего задания конкретного класса
+  rpc ListHomework(ListHomeworkRequest) returns (ListHomeworkResponse) {
+    option (google.api.http) = {
+      // {class_id} автоматически запишется в поле class_id внутри ListHomeworkRequest
+      get: "/v1/classes/{class_id}/homework"
+    };
+  }
 
   // Удаление домашней работы
-  rpc DeleteHomework(DeleteHomeworkRequest) returns (google.protobuf.Empty);
+  rpc DeleteHomework(DeleteHomeworkRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/homework/{id}"
+    };
+  }
 }
 
 message RecordHomeworkRequest {
@@ -344,20 +488,38 @@ message ListHomeworkResponse {
 message DeleteHomeworkRequest {
   string id = 1; // uuid
 }
-
-// Сервис управление статус-кодамиDeleteStatusCodeRequest
 service StatusCodeService {
+  
   // Создание нового статус кода
-  rpc CreateStatusCode(CreateStatusCodeRequest) returns (StatusCode);
+  rpc CreateStatusCode(CreateStatusCodeRequest) returns (StatusCode) {
+    option (google.api.http) = {
+      post: "/v1/status-codes"
+      body: "*"
+    };
+  }
 
-  // Обновление название статус кода
-  rpc UpdateStatusCode(UpdateStatusCodeRequest) returns (StatusCode);
+  // Обновление названия статус кода
+  rpc UpdateStatusCode(UpdateStatusCodeRequest) returns (StatusCode) {
+    option (google.api.http) = {
+      // {id} свяжется с полем id в UpdateStatusCodeRequest
+      put: "/v1/status-codes/{id}"
+      body: "*"
+    };
+  }
 
-  // Все статус кода
-  rpc ListStatusCode(ListStatusCodeRequest) returns (ListStatusCodeResponse);
+  // Получение всех статус кодов
+  rpc ListStatusCode(ListStatusCodeRequest) returns (ListStatusCodeResponse) {
+    option (google.api.http) = {
+      get: "/v1/status-codes"
+    };
+  }
 
   // Удаление статус кода
-  rpc DeleteStatusCode(DeleteStatusCodeRequest) returns (google.protobuf.Empty);
+  rpc DeleteStatusCode(DeleteStatusCodeRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/status-codes/{id}"
+    };
+  }
 }
 
 message CreateStatusCodeRequest {
@@ -384,23 +546,46 @@ message ListStatusCodeResponse {
 message DeleteStatusCodeRequest {
   string id = 1; // uuid
 }
-
-// Сервис отвечающий за то у кого и какие предметы ведет учитель
+// Сервис управления учебной нагрузкой учителей с маппингом в REST API
 service TeachingLoadService {
+  
   // Назначение вести предмет учителю для конкретного класса
-  rpc CreateTeachingLoad(CreateTeachingLoadRequest) returns (TeachingLoad);
+  rpc CreateTeachingLoad(CreateTeachingLoadRequest) returns (TeachingLoad) {
+    option (google.api.http) = {
+      post: "/v1/teaching-loads"
+      body: "*"
+    };
+  }
 
-  // Получение конкретного назначение
-  rpc GetTeachingLoad(GetTeachingLoadRequest) returns (TeachingLoad);
+  // Получение конкретной записи о нагрузке
+  rpc GetTeachingLoad(GetTeachingLoadRequest) returns (TeachingLoad) {
+    option (google.api.http) = {
+      // {id} запишется в поле id внутри GetTeachingLoadRequest
+      get: "/v1/teaching-loads/{id}"
+    };
+  }
 
-  // Получить список всех распределений нагрузки
-  rpc ListTeachingLoad(ListTeachingLoadRequest) returns (ListTeachingLoadResponse);
+  // Получить список всех распределений нагрузки (с фильтрацией)
+  rpc ListTeachingLoad(ListTeachingLoadRequest) returns (ListTeachingLoadResponse) {
+    option (google.api.http) = {
+      get: "/v1/teaching-loads"
+    };
+  }
 
-  // Замена преподавателя для предмета
-  rpc UpdateTeachingLoad(UpdateTeachingLoadRequest) returns (TeachingLoad);
+  // Замена преподавателя или изменение параметров нагрузки
+  rpc UpdateTeachingLoad(UpdateTeachingLoadRequest) returns (TeachingLoad) {
+    option (google.api.http) = {
+      put: "/v1/teaching-loads/{id}"
+      body: "*"
+    };
+  }
 
   // Удалить запись о нагрузке
-  rpc DeleteTeachingLoad(DeleteTeachingLoadRequest) returns (google.protobuf.Empty);
+  rpc DeleteTeachingLoad(DeleteTeachingLoadRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/teaching-loads/{id}"
+    };
+  }
 }
 
 message CreateTeachingLoadRequest {

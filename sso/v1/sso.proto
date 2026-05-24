@@ -5,28 +5,73 @@ package sso.v1;
 option go_package = "github.com/EliasBlind/EduFlow/pkg/protos/gen/sso/v1;ssov1";
 
 import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
 
 // Авторизация пользователей
 service Auth {
   // Регистрация нового пользователя
-  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc Register(RegisterRequest) returns (RegisterResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/register"
+      body: "*"
+    };
+  };
 
   // Верефикация почты (двухфакторная аунтетификация)
-  rpc VerifyEmail(VerifyRequest) returns (TokenPair);
+  rpc VerifyEmail(VerifyRequest) returns (TokenPair) {
+    option (google.api.http) = {
+      post: "/v1/auth/verify"
+      body: "*"
+    };
+  };
 
   // При логине выдаем сразу два токена
-  rpc Login(LoginRequest) returns (TokenPair);
+  rpc Login(LoginRequest) returns (TokenPair) {
+    option (google.api.http) = {
+      post: "/v1/auth/login"
+      body: "*"
+    };
+  };
 
   // Разлогинится
-  rpc Logout(LogoutRequest) returns (LogoutResponse);
+  rpc Logout(LogoutRequest) returns (LogoutResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/logout"
+      body: "*"
+    };
+  };
 
   // Для обновления передаем Refresh-токен
-  rpc RefreshToken(RefreshRequest) returns (TokenPair);
+  rpc RefreshToken(RefreshRequest) returns (TokenPair) {
+    option (google.api.http) = {
+      post: "/v1/auth/refresh"
+      body: "*"
+    };
+  };
 
+  // Нужен jwt токен в методаных с ролью админа
   // Получение информации обовсех юзерах.
-  rpc ListUsers(TokenRequest) returns (ListUsersResponse);
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {
+    option (google.api.http) = {
+      get: "/v1/users"
+    };
+  };
 
-  rpc SetRole(SetRoleRequest) returns (google.protobuf.Empty);
+  // Нужен jwt токен в методаных с ролью админа
+  rpc SetRole(SetRoleRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/users/{user_id}/role"
+      body: "*"
+    };
+  };
+
+  // Нужен jwt токен в методаных с ролью админа
+  rpc CreateStudent(User) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/students"
+      body: "*"
+    };
+  };
 }
 
 message RegisterRequest {
@@ -67,26 +112,21 @@ message LogoutResponse {
   bool success = 1;
 }
 
-message TokenRequest {
-  // jwt токен
-  string token = 1;
-}
-
 message User {
-  string id = 1; // uuid
+  string id    = 1; // uuid
   string login = 2;
   string email = 3;
-  string role = 4;
+  string role  = 4;
 }
 
+message ListUsersRequest { }
+
 message ListUsersResponse {
-  uint32           total_count = 1;
-  repeated User users = 2;
+  uint32        total_count = 1;
+  repeated User users       = 2;
 }
 
 message SetRoleRequest {
-  // jwt токен
-  string token = 1;
-  string user_id = 2;
-  string role = 3;
+  string user_id = 1;
+  string role    = 2;
 }
