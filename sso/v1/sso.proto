@@ -11,6 +11,9 @@ service Auth {
   // Регистрация нового пользователя
   rpc Register(RegisterRequest) returns (RegisterResponse);
 
+  // Создание пользователей
+  rpc CreateUsers(CreateUsersRequest) returns(google.protobuf.Empty);
+
   // Верефикация почты (двухфакторная аунтетификация)
   rpc VerifyEmail(VerifyRequest) returns (TokenPair);
 
@@ -24,7 +27,7 @@ service Auth {
   rpc RefreshToken(RefreshRequest) returns (TokenPair);
 
   // Получение информации обовсех юзерах.
-  rpc ListUsers(TokenRequest) returns (ListUsersResponse);
+  rpc ListUsers(google.protobuf.Empty) returns (ListUsersResponse);
 
   rpc SetRole(SetRoleRequest) returns (google.protobuf.Empty);
 }
@@ -37,6 +40,10 @@ message RegisterRequest {
 }
 
 message RegisterResponse {}
+
+message CreateUsersRequest {
+  repeated User users = 1;
+}
 
 message VerifyRequest {
   string email = 1;
@@ -73,20 +80,20 @@ message TokenRequest {
 }
 
 message User {
-  string id = 1; // uuid
+  string id    = 1; // uuid
   string login = 2;
   string email = 3;
-  string role = 4;
+  string role  = 4;
 }
 
 message ListUsersResponse {
-  uint32           total_count = 1;
-  repeated User users = 2;
+  uint32        total_count = 1;
+  repeated User users       = 2;
 }
 
 message SetRoleRequest {
   // jwt токен
-  string token = 1;
+  string token   = 1;
   string user_id = 2;
-  string role = 3;
+  string role    = 3;
 }
