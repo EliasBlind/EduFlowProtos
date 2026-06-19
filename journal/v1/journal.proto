@@ -24,7 +24,7 @@ service StudentService {
   rpc GetStudent(GetStudentRequest) returns (Student) {
     option (google.api.http) = {
       // {id} автоматически запишется в поле id внутри GetStudentRequest
-      get: "/v1/students/{id}" 
+      get: "/v1/students/{student_id}" 
     };
   }
   
@@ -344,7 +344,7 @@ service GradesService {
   rpc UpdateGrade(UpdateGradeRequest) returns (Grade) {
     option (google.api.http) = {
       // {id} свяжется с полем id в UpdateGradeRequest
-      put: "/v1/grades/{id}"
+      put: "/v1/grades/{grade_id}"
       body: "*"
     };
   }
